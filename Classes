@@ -1,0 +1,49 @@
+# Вариант 1
+
+class Developer:
+    name = 0
+
+    def __init__(self, n):
+        self.name = n
+
+    def print(self):
+        return 'Разработчик: ' + str(self.name)
+
+
+class Software:
+    title = 0
+    version = 0
+    developer = 0
+
+    def __init__(self, t, v, n):
+        self.title = t
+        self.version = v
+        self.developer = Developer(n)
+
+    def print(self):
+        return 'Программа: ' + str(self.title) + '\n' + 'Версия: ' + str(self.version) + '\n' + self.developer.print()
+
+
+class WordProcessor(Software):
+    def __init__(self, t, v, n):
+        Software.__init__(self, t, v, n)
+
+
+class Virus(Software):
+    def __init__(self, t, v):
+        Software.__init__(self, t, v, 'Anonim')
+
+
+class Games(Software):
+    def __init__(self, t, v, n):
+        Software.__init__(self, t, v, n)
+
+    def print(self):
+        return 'Игра: ' + str(self.title) + '\n' + 'Версия: ' + str(self.version) + '\n' + self.developer.print()
+
+
+saper = Games('Saper', 1.2, 'IBA')
+word = WordProcessor('Word', 3.4, 'IbaGroup')
+
+print(saper.print())
+print(word.print())
