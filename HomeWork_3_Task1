@@ -1,0 +1,240 @@
+# Вариант 1
+import random
+
+from numpy.ma import sqrt
+
+
+class Coordinates:
+    x = 0
+    y = 0
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def setXY(self, x, y):
+        self.x = x
+        self.y = y
+
+    def getX(self):
+        return self.x
+
+    def getY(self):
+        return self.y
+
+    def __setattr__(self, key, value):
+        if key == 'x' or key == 'y':
+            self.__dict__[key] = value
+        else:
+            print('Ошибка, неверный параметр')
+
+
+class Triangle:
+    a = 0
+    b = 0
+    c = 0
+    accuracy = 0.01
+
+    # Конструктор с параметрами
+    def __init__(self, x1, y1, x2, y2, x3, y3):
+        self.a = Coordinates(x1, y1)
+        self.b = Coordinates(x2, y2)
+        self.c = Coordinates(x3, y3)
+        print('Конструктор с параметрами отработал')
+
+    def setA(self, x, y):
+        self.a.setXY(x, y)
+
+    def setB(self, x, y):
+        self.b.setXY(x, y)
+
+    def setC(self, x, y):
+        self.c.setXY(x, y)
+
+    def toString(self):
+        return str(
+            'A = (' + str(self.a.getX()) + ', ' + str(self.a.getY()) + '); '
+                                                                       'B = (' + str(self.b.getX()) + ', ' + str(
+                self.b.getY()) + '); '
+                                 'C = (' + str(self.c.getX()) + ', ' + str(self.c.getY()) + ');')
+
+    def lenghtAB(self):
+        return sqrt(abs(((self.b.getX() - self.a.getX()) ** 2) + ((self.b.getY() - self.a.getY()) ** 2)))
+
+    def lenghtBC(self):
+        return sqrt(abs(((self.c.getX() - self.b.getX()) ** 2) + ((self.c.getY() - self.b.getY()) ** 2)))
+
+    def lenghtAC(self):
+        return sqrt(abs(((self.c.getX() - self.a.getX()) ** 2) + ((self.c.getY() - self.a.getY()) ** 2)))
+
+    def perimeter(self):
+        return self.lenghtAB() + self.lenghtAC() + self.lenghtBC()
+
+    # Вернет 1 если треугольник прямоугольный и 0 если нет
+    def thisRightTriangle(self):
+        if self.lenghtAB() > self.lenghtBC() and self.lenghtAB() > self.lenghtAC():
+            if abs(self.lenghtAB() ** 2 - (self.lenghtBC() ** 2 + self.lenghtAC() ** 2)) < self.accuracy:
+                return 1
+            else:
+                return 0
+        elif self.lenghtAC() > self.lenghtBC() and self.lenghtAC() > self.lenghtAB():
+            if abs(self.lenghtAC() ** 2 - (self.lenghtAB() ** 2 + self.lenghtBC() ** 2)) < self.accuracy:
+                return 1
+            else:
+                return 0
+        elif self.lenghtBC() > self.lenghtAC() and self.lenghtBC() > self.lenghtAB():
+            if abs(self.lenghtBC() ** 2 - (self.lenghtAB() ** 2 + self.lenghtAC() ** 2)) < self.accuracy:
+                return 1
+            else:
+                return 0
+
+    # Вернет 1 если треугольник равнобедренный и 0 если нет
+    def thisIsoscelesTriangle(self):
+        if abs(self.lenghtAB() - self.lenghtBC()) < self.accuracy or abs(self.lenghtAB() - self.lenghtAC()) < self.accuracy or abs(self.lenghtBC() - self.lenghtAC()) < self.accuracy:
+            return 1
+        else:
+            return 0
+
+    # Вернет 1 если треугольник равносторонний и 0 если нет
+    def thisEquilateralTriangle(self):
+        if abs(self.lenghtAB() - self.lenghtBC()) < self.accuracy and abs(self.lenghtAB() - self.lenghtAC()) < self.accuracy:
+            return 1
+        else:
+            return 0
+
+    # Вернет 1 если это треугольники 0 если нет
+    def thisTriangle(self):
+        if (
+                self.lenghtAB() + self.lenghtBC() > self.lenghtAC() or self.lenghtAB() + self.lenghtAC() > self.lenghtBC() or self.lenghtBC() + self.lenghtAC() > self.lenghtAB()) and self.lenghtAB() > 0 and self.lenghtBC() > 0 and self.lenghtAC() > 0:
+            return 1
+        else:
+            return 0
+
+    def __setattr__(self, key, value):
+        if key == 'a' or key == 'b' or key == 'c':
+            self.__dict__[key] = value
+        else:
+            print('Ошибка, неверный параметр')
+
+
+triangles = []
+triangles.append(Triangle(0, 0, 3, 0, 1.5, 2.598076)) # Добавляем заведомо известный равносторонний треугольник
+quantity = 1000 #Количество треугольников
+min = 0
+max = 10 #Максимальная применяемая координата
+for i in range(1, quantity):
+    x1 = random.randint(min, max)
+    y1 = random.randint(min, max)
+    x2 = random.randint(min, max)
+    y2 = random.randint(min, max)
+    x3 = random.randint(min, max)
+    y3 = random.randint(min, max)
+    triangles.append(Triangle(x1, y1, x2, y2, x3, y3))
+    print(triangles[i].toString())
+
+z = 0
+countIsoscelesTriangle = 0  # всего равнобедренных треугольников
+maxIsoscelesTrianglePerimeter = 0
+minIsoscelesTrianglePerimeter = 0
+countRightTriangle = 0  # всего прямоугольных треугольников
+maxRightTrianglePerimeter = 0
+minRightTrianglePerimeter = 0
+countEquilateralTriangle = 0  # всего равносторонних треугольников
+maxEquilateralTrianglePerimeter = 0
+minEquilateralTrianglePerimeter = 0
+countTriangle = 0  # всего треугольников
+maxTrianglePerimeter = 0
+minTrianglePerimeter = 0
+countArbitraryTriangle = 0  # всего произвольных треугольников
+maxArbitraryTrianglePerimeter = 0
+minArbitraryTrianglePerimeter = 0
+
+for i in range(quantity):
+    if triangles[i].thisTriangle() == 1:
+        countTriangle += 1
+        z = 1
+        if maxTrianglePerimeter != 0:
+            if maxTrianglePerimeter < (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC()):
+                maxTrianglePerimeter = (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC())
+        else:
+            maxTrianglePerimeter = (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC())
+        if minTrianglePerimeter != 0:
+            if minTrianglePerimeter > (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC()):
+                minTrianglePerimeter = (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC())
+        else:
+            minTrianglePerimeter = (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC())
+    if triangles[i].thisTriangle() == 1 and triangles[i].thisRightTriangle() == 1:
+        countRightTriangle += 1
+        z = 0
+        if maxRightTrianglePerimeter != 0:
+            if maxRightTrianglePerimeter < (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC()):
+                maxRightTrianglePerimeter = (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC())
+        else:
+            maxRightTrianglePerimeter = (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC())
+        if minRightTrianglePerimeter != 0:
+            if minRightTrianglePerimeter > (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC()):
+                minRightTrianglePerimeter = (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC())
+        else:
+            minRightTrianglePerimeter = (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC())
+    if triangles[i].thisTriangle() == 1 and triangles[i].thisEquilateralTriangle() == 1:
+        countEquilateralTriangle += 1
+        z = 0
+        if maxEquilateralTrianglePerimeter != 0:
+            if maxEquilateralTrianglePerimeter < (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC()):
+                maxEquilateralTrianglePerimeter = (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC())
+        else:
+            maxEquilateralTrianglePerimeter = (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC())
+        if minEquilateralTrianglePerimeter != 0:
+            if minEquilateralTrianglePerimeter > (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC()):
+                minEquilateralTrianglePerimeter = (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC())
+        else:
+            minEquilateralTrianglePerimeter = (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC())
+    elif triangles[i].thisTriangle() == 1 and triangles[i].thisIsoscelesTriangle() == 1:
+        countIsoscelesTriangle += 1
+        z = 0
+        if maxIsoscelesTrianglePerimeter != 0:
+            if maxIsoscelesTrianglePerimeter < (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC()):
+                maxIsoscelesTrianglePerimeter = (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC())
+        else:
+            maxIsoscelesTrianglePerimeter = (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC())
+        if minIsoscelesTrianglePerimeter != 0:
+            if minIsoscelesTrianglePerimeter > (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC()):
+                minIsoscelesTrianglePerimeter = (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC())
+        else:
+            minIsoscelesTrianglePerimeter = (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC())
+    if z == 1:
+        countArbitraryTriangle += 1
+        z = 0
+        if maxArbitraryTrianglePerimeter != 0:
+            if maxArbitraryTrianglePerimeter < (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC()):
+                maxArbitraryTrianglePerimeter = (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC())
+        else:
+            maxArbitraryTrianglePerimeter = (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC())
+        if minArbitraryTrianglePerimeter != 0:
+            if minArbitraryTrianglePerimeter > (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC()):
+                minArbitraryTrianglePerimeter = (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC())
+        else:
+            minArbitraryTrianglePerimeter = (triangles[i].lenghtAB() + triangles[i].lenghtAC() + triangles[i].lenghtBC())
+
+print('Всего треугольников: ' + str(countTriangle))
+print('Максимальный периметр: ' + str(maxTrianglePerimeter))
+print('Минимальный периметр: ' + str(minTrianglePerimeter))
+print('------------------------------------------------')
+print('Из них:')
+print('------------------------------------------------')
+print('Равнобедренных треугольников: ' + str(countIsoscelesTriangle))
+print('Максимальный периметр: ' + str(maxIsoscelesTrianglePerimeter))
+print('Минимальный периметр: ' + str(minIsoscelesTrianglePerimeter))
+print('------------------------------------------------')
+print('Равносторонних треугольников: ' + str(countEquilateralTriangle))
+print('Максимальный периметр: ' + str(maxEquilateralTrianglePerimeter))
+print('Минимальный периметр: ' + str(minEquilateralTrianglePerimeter))
+print('------------------------------------------------')
+print('Прямоугольных треугольников: ' + str(countRightTriangle))
+print('Максимальный периметр: ' + str(maxRightTrianglePerimeter))
+print('Минимальный периметр: ' + str(minRightTrianglePerimeter))
+print('------------------------------------------------')
+print('Произвольных треугольников: ' + str(countArbitraryTriangle))
+print('Максимальный периметр: ' + str(maxArbitraryTrianglePerimeter))
+print('Минимальный периметр: ' + str(minArbitraryTrianglePerimeter))
+print('------------------------------------------------')
